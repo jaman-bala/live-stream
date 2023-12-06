@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, Typography, Table, TableBody, TableCell, TableRow, Container } from '@mui/material';
 import ButtonAppBar from './componets/ButtonAppBar';
+import axios from 'axios';
 
 const StreamImageCard = ({ currentStreamId }) => (
   <Card sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mt: '35px', width: '120vh' }}>
@@ -43,11 +44,10 @@ const App = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch('http://127.0.0.1:8000/streams/');
-        const data = await response.json();
-        setStreams(data);
+        const response = await axios.get('http://127.0.0.1:8000/streams/');
+        setStreams(response.data);
         // Set the current stream to the first one by default
-        setCurrentStreamId(data.length > 0 ? data[0].id : null);
+        setCurrentStreamId(response.data.length > 0 ? response.data[0].id : null);
       } catch (error) {
         console.error('Error fetching data:', error);
       }
@@ -56,22 +56,26 @@ const App = () => {
     fetchData();
   }, []); // Empty dependency array means this effect runs once on mount
 
-  const changeStreamImage = (streamId) => {
-    // Change the current stream ID when a link is clicked
-    setCurrentStreamId(streamId);
+  const changeStreamImage = async (streamId) => {
+    try {
+      await fetch(`http://127.0.0.1:8000/streams/${streamId}`);
+      setCurrentStreamId(streamId);
+    } catch (error) {
+      console.error('Error fetching stream:', error);
+    }
   };
 
   return (
     <div>
       <ButtonAppBar />
-    
-    <Container sx={{ display: 'flex'}}>
-      {/* Display the current stream image */}
-      <StreamImageCard currentStreamId={currentStreamId} />
 
-      {/* Display the list of streams with links to change the current stream */}
-      <StreamTableCard streams={streams} changeStreamImage={changeStreamImage} />
-    </Container>
+      <Container sx={{ display: 'flex' }}>
+        {/* Display the current stream image */}
+        <StreamImageCard currentStreamId={currentStreamId} />
+
+        {/* Display the list of streams with links to change the current stream */}
+        <StreamTableCard streams={streams} changeStreamImage={changeStreamImage} />
+      </Container>
     </div>
   );
 };
