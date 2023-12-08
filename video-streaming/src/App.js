@@ -8,12 +8,13 @@ const StreamImageCard = ({ currentStreamId }) => (
     {currentStreamId && (
       <CardContent>
         <img
-          id="streamImage"
-          className="img-rounded"
-          style={{ maxWidth: '100%' }}
-          src={`http://127.0.0.1:8000/streams/${currentStreamId}`}
-          alt="Stream"
-        />
+            id="streamImage"
+            className="img-rounded"
+            style={{ maxWidth: '100%' }}
+            src={`http://127.0.0.1:8000/streams/${currentStreamId}`}
+            alt="Stream"
+          />
+
       </CardContent>
     )}
   </Card>
@@ -40,6 +41,7 @@ const StreamTableCard = ({ streams, changeStreamImage }) => (
 const App = () => {
   const [streams, setStreams] = useState([]);
   const [currentStreamId, setCurrentStreamId] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -49,33 +51,42 @@ const App = () => {
         // Set the current stream to the first one by default
         setCurrentStreamId(response.data.length > 0 ? response.data[0].id : null);
       } catch (error) {
-        console.error('Error fetching data:', error);
+        console.error('Error fetching data:', error.message);
+        // Handle the error
+      } finally {
+        setLoading(false);
       }
     };
-
+  
     fetchData();
   }, []); // Empty dependency array means this effect runs once on mount
 
   const changeStreamImage = async (streamId) => {
     try {
-      await fetch(`http://127.0.0.1:8000/streams/${streamId}`);
+      await fetch(`http://127.0.0.1:8000/streams/${streamId}/`);
       setCurrentStreamId(streamId);
     } catch (error) {
-      console.error('Error fetching stream:', error);
+      console.error('Error fetching stream:', error.message);
+      // Handle the error, e.g., display an error message to the user
     }
-  };
+  }
 
   return (
     <div>
       <ButtonAppBar />
-
       <Container sx={{ display: 'flex' }}>
-        {/* Display the current stream image */}
-        <StreamImageCard currentStreamId={currentStreamId} />
+      {loading ? (
+        <p>Loading...</p>
+      ) : (
+        <>
+          {/* Display the current stream image */}
+          <StreamImageCard currentStreamId={currentStreamId} />
 
-        {/* Display the list of streams with links to change the current stream */}
-        <StreamTableCard streams={streams} changeStreamImage={changeStreamImage} />
-      </Container>
+          {/* Display the list of streams with links to change the current stream */}
+          <StreamTableCard streams={streams} changeStreamImage={changeStreamImage} />
+        </>
+      )}
+    </Container>
     </div>
   );
 };
