@@ -1,7 +1,9 @@
 from django.db import models
 
 
-class Stream(models.Model):
-    id = models.IntegerField(primary_key=True, unique=True)
+class IPCamera(models.Model):
     title = models.CharField(max_length=255)
     rtsp_url = models.CharField(max_length=200)
+
+    def __str__(self):
+        return f'{self.title}'

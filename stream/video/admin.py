@@ -1,4 +1,4 @@
 from django.contrib import admin
-from .models import Stream
+from .models import IPCamera
 
-admin.site.register(Stream)
+admin.site.register(IPCamera)

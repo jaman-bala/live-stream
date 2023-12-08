@@ -1,6 +1,6 @@
 from django.urls import path
-from video.views import stream_view
+from stream.api.api import stream_streams_id
 
 urlpatterns = [
-    path('streams/<int:stream_id>', stream_view, name='video_stream'),
+    path('streams/<int:stream_id>', stream_streams_id, name='video_stream'),
 ]

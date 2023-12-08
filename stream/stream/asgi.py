@@ -8,14 +8,3 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'stream.settings')
 
 application = get_asgi_application()
 
-# Добавьте следующие строки для асинхронного запуска через uvicorn
-if settings.DEBUG:
-    from channels.layers import get_channel_layer
-    channel_layer = get_channel_layer()
-    import django
-
-    django.setup()
-
-
-def get_asgi_application():
-    return application
