@@ -27,7 +27,7 @@ def gen_frames(rtsp_url):
                    b'Content-Type: image/jpeg\r\n\r\n' + buffer.tobytes() + b'\r\n')
     finally:
         cap.release()
-        out.release()
+
 
 
 
